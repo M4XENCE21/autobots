@@ -1,11 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>binance</groupId>
-	<artifactId>binance-bot</artifactId>
+	<groupId>autobots</groupId>
+	<artifactId>autobots</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>binance-bot</name>
+	<name>autobots</name>
   
 	<dependencies>
+		<dependency> 
+			<groupId>org.junit.jupiter</groupId>  
+			<artifactId>junit-jupiter-api</artifactId>  
+			<version>5.9.0</version>  
+			<scope>test</scope>  
+		</dependency>
 		<dependency>
 			<groupId>org.ta4j</groupId>
 			<artifactId>ta4j-examples</artifactId>
@@ -39,7 +45,7 @@
 		<dependency>
 		    <groupId>org.glassfish.jaxb</groupId>
 		    <artifactId>jaxb-runtime</artifactId>
-		    <version>2.3.0-b170127.1453</version>
+		    <version>2.3.0</version>
 		</dependency>
 	  	<dependency>
 		  <groupId>co.oril</groupId>

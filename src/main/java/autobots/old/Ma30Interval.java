@@ -1,4 +1,4 @@
-package autobots.util;
+package autobots.old;
 
 public class Ma30Interval {
 	protected final static int hour = 60;
