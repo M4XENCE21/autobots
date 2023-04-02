@@ -1,11 +1,9 @@
 package autobots.basic;
 
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.TimeInForce;
@@ -24,46 +22,19 @@ public class trading {
 
 	private FileWriter log;
 
-	private double getBalance(String pair, Account account) {
+	public double getBalance(String pair, Account account) {
 		return Double.parseDouble(account.getAssetBalance(pair).getFree());
 	}
 
-	private double getPrice(BinanceApiRestClient client, String pair1, String pair2) {
+	public double getPrice(BinanceApiRestClient client, String pair1, String pair2) {
 		return Double.parseDouble(client.getPrice(pair1 + pair2).getPrice());
-	}
-
-	@SuppressWarnings("deprecation")
-	private void initialize(String API_KEY, String SECRET, BinanceApiClientFactory factory, BinanceApiRestClient client,
-			Account account, FileWriter csvResult) throws IOException {
-		Parser.write(log, "========== Initialisation ==========");
-		String csvFileName = Parser.createFile("csvFluxUsdt", ".csv");
-		csvResult = new FileWriter(csvFileName);
-		// load csv
-
-		// calculate indicators
-		// connection API
-		factory = BinanceApiClientFactory.newInstance(API_KEY, SECRET);
-		client = factory.newRestClient();
-		account = client.getAccount();
-		Parser.write(log, "account : " + account);
-		Parser.write(log, "========== Initialisation FIN ==========");
 	}
 
 	private void updateCsv() {
 		// update csv, 1 file by day
 	}
 
-	private void testConnectivity(BinanceApiRestClient client) {
-		// Test connectivity
-		client.ping();
-
-		// Check server time
-		long serverTime = client.getServerTime();
-		System.out.println("server time : " + serverTime);
-		System.out.println("system time - server time : " + (System.currentTimeMillis() - serverTime));
-	}
-
-	private void buyOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price,
+	public void buyOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price,
 			ArrayList<Long> listOfOrdersStrategy) {
 		DecimalFormat f = new DecimalFormat("##.00");
 		String quantityString = f.format(quantity);
@@ -77,7 +48,7 @@ public class trading {
 		}
 	}
 
-	private void sellOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price,
+	public void sellOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price,
 			ArrayList<Long> listOfOrdersStrategy) {
 		DecimalFormat f = new DecimalFormat("##.00");
 		String quantityString = f.format(quantity);
@@ -94,7 +65,7 @@ public class trading {
 		client.cancelOrder(new CancelOrderRequest(pair, orderId));
 	}
 
-	private void cancelOrders(BinanceApiRestClient client, String pair1, String pair2,
+	public void cancelOrders(BinanceApiRestClient client, String pair1, String pair2,
 			ArrayList<Long> listOfOrdersStrategy) {
 		for (long orderId : listOfOrdersStrategy) {
 			OrderStatus orderStatus = client.getOrderStatus(new OrderStatusRequest(pair1 + pair2, orderId)).getStatus();
