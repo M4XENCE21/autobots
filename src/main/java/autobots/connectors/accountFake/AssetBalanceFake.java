@@ -26,6 +26,13 @@ public class AssetBalanceFake {
 	 */
 	private String locked;
 
+	public AssetBalanceFake(String asset, String free, String locked) {
+		super();
+		this.asset = asset;
+		this.free = free;
+		this.locked = locked;
+	}
+
 	public String getAsset() {
 		return asset;
 	}

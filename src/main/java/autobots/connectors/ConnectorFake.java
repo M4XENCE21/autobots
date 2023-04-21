@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import autobots.connectors.accountFake.AccountFake;
+import autobots.connectors.accountFake.AssetBalanceFake;
 import autobots.parsing.Parser;
 
 public class ConnectorFake {
@@ -18,10 +19,11 @@ public class ConnectorFake {
 		this.log = log;
 	}
 
-	public void connect() throws IOException {
+	public void connect(String symbol) throws IOException {
 		Parser.write(log, "========== Initialisation ==========");
-		// connection API
 		account = new AccountFake();
+		account.setAssetBalance(new AssetBalanceFake("ETH", "2.5", "0"));
+		account.setAssetBalance(new AssetBalanceFake("USDT", "5000", "0"));
 		Parser.write(log, "account : " + account);
 		Parser.write(log, "========== Initialisation FIN ==========");
 	}

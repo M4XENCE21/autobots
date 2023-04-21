@@ -141,11 +141,26 @@ public class AccountFake {
 				return assetBalance;
 			}
 		}
-		AssetBalanceFake emptyBalance = new AssetBalanceFake();
-		emptyBalance.setAsset(symbol);
-		emptyBalance.setFree("0");
-		emptyBalance.setLocked("0");
-		return emptyBalance;
+		return new AssetBalanceFake(symbol, "0", "0");
+	}
+
+	/**
+	 * Set the asset balance for a given symbol.
+	 *
+	 * @param AssetBalanceFake asset to set the balances to
+	 */
+	public void setAssetBalance(AssetBalanceFake asset) {
+		boolean found = false;
+		for (AssetBalanceFake assetBalance : balances) {
+			if (asset.getAsset().equals(assetBalance.getAsset())) {
+				assetBalance.setFree(asset.getFree());
+				assetBalance.setLocked(asset.getLocked());
+				found = true;
+			}
+		}
+		if (!found) {
+			balances.add(asset);
+		}
 	}
 
 	@Override
