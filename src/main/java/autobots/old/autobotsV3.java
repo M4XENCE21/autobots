@@ -17,7 +17,7 @@ import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.account.request.CancelOrderRequest;
 import com.binance.api.client.domain.account.request.OrderStatusRequest;
 
-import autobots.parsing.Parser;
+import autobots.parsing.ParserForTests;
 import autobots.parsing.XmlFluxUsdt;
 import autobots.testUtils.Balance;
 import autobots.testUtils.ReadFile;
@@ -33,7 +33,7 @@ public class autobotsV3 {
 	private static double strategy1Countdown = 0.0;
 	private static boolean priceLowerThanMa30 = false;
 	private static boolean previousPriceLowerThanMa30 = false;
-	private static String traces = Parser.createFile("traces", ".txt");
+	private static String traces = ParserForTests.createFile("traces", ".txt");
 	private static ArrayList<Double> listOfStrategyCoeff = new ArrayList<Double>();
 	private static FileWriter log = null;
 	private static FileWriter csvResult = null;
@@ -77,7 +77,7 @@ public class autobotsV3 {
 							NewOrder.limitBuy(pair.getPair1Name(), TimeInForce.GTC, quantityString, priceString));
 					// System.out.println(newOrderResponse.getOrderId());
 					listOfOrdersStrategy.add(newOrderResponse.getOrderId());
-					Parser.write(log, "Nouvel ordre d'achat de " + quantityString + " FLUX au prix de " + priceString
+					ParserForTests.write(log, "Nouvel ordre d'achat de " + quantityString + " FLUX au prix de " + priceString
 							+ "| id : " + newOrderResponse.getOrderId());
 
 				}
@@ -106,7 +106,7 @@ public class autobotsV3 {
 						NewOrder.limitSell(pair.getPair1Name(), TimeInForce.GTC, quantityString, priceString));
 				// System.out.println(newOrderResponse.getOrderId());
 				listOfOrdersStrategy.add(newOrderResponse.getOrderId());
-				Parser.write(log, "Nouvel ordre de vente de " + quantityString + " FLUX au prix de " + priceString
+				ParserForTests.write(log, "Nouvel ordre de vente de " + quantityString + " FLUX au prix de " + priceString
 						+ "| id : " + newOrderResponse.getOrderId());
 			}
 		}
@@ -175,7 +175,7 @@ public class autobotsV3 {
 						|| (orderStatus == OrderStatus.PARTIALLY_FILLED);
 				if (orderIsActive) {
 					try {
-						Parser.write(log,
+						ParserForTests.write(log,
 								"Ordre annulé - pair : " + pair + " | statut : " + orderStatus + " | id : " + orderId);
 						cancelOrder(client, orderId, pair);
 					} catch (Exception e) {
@@ -192,7 +192,7 @@ public class autobotsV3 {
 		try {
 			// init FileWriter
 			log = new FileWriter(traces);
-			Parser.write(log, "========== Initialisation ==========");
+			ParserForTests.write(log, "========== Initialisation ==========");
 
 			// only for testing mode
 			if (isTestingMode) {
@@ -202,13 +202,13 @@ public class autobotsV3 {
 				System.out.println("Balance USDT : " + balances.get("USDT").getFreeBalance());
 			}
 			// Load xml, ma30 and ma30Trending
-			XmlFluxUsdt xmlFluxUsdt = Parser.loadXml();
-			ma30Array = Parser.loadMa30(xmlFluxUsdt);
+			XmlFluxUsdt xmlFluxUsdt = ParserForTests.loadXml();
+			ma30Array = ParserForTests.loadMa30(xmlFluxUsdt);
 //			trendArray = Parser.loadMa30Trending(xmlFluxUsdt);
-			Parser.write(log, "ma30Array : " + ma30Array);
+			ParserForTests.write(log, "ma30Array : " + ma30Array);
 //			Parser.write(log, "trendArray : " + trendArray);
 			// create csv file with wallet value evolution
-			String csvFileName = Parser.createFile("csvFluxUsdt", ".csv");
+			String csvFileName = ParserForTests.createFile("csvFluxUsdt", ".csv");
 			csvResult = new FileWriter(csvFileName);
 			// connection API
 			@SuppressWarnings("deprecation")
@@ -237,7 +237,7 @@ public class autobotsV3 {
 					percentageSellList);
 
 			Account account = client.getAccount();
-			Parser.write(log, "account : " + account);
+			ParserForTests.write(log, "account : " + account);
 			double USDTBalance = getBalance(pair1, account, 0);
 			double FLUXBalance = getBalance(pair2, account, 0);
 			// On récupere le prix actuel du coin
@@ -257,17 +257,17 @@ public class autobotsV3 {
 			FLUXma30.setLast30hPrices1h(ma30Array);
 			// on instancie priceLowerThanMa30 et previousPriceLowerThanMa30
 			priceLowerThanMa30 = (FLUXPrice < FLUXma30.getUpdateMa30());
-			Parser.write(log, "ma30 : " + FLUXma30.getMa30());
+			ParserForTests.write(log, "ma30 : " + FLUXma30.getMa30());
 
-			Parser.write(log, "========== Initialisation FIN ==========");
-			Parser.write(log, "========== Début ==========");
+			ParserForTests.write(log, "========== Initialisation FIN ==========");
+			ParserForTests.write(log, "========== Début ==========");
 			int testcounter = 1;
 			int testCsvFileCounter = 0;
 
 			while (true) {
-				Parser.write(log, "---- Tour " + testcounter++ + " ----");
-				Parser.write(log, "ma30 : " + FLUXma30.getLast30hPrices1h().toString());
-				Parser.write(log, "ma30Trending : " + FLUXma30.getMa30Trending().toString());
+				ParserForTests.write(log, "---- Tour " + testcounter++ + " ----");
+				ParserForTests.write(log, "ma30 : " + FLUXma30.getLast30hPrices1h().toString());
+				ParserForTests.write(log, "ma30Trending : " + FLUXma30.getMa30Trending().toString());
 
 				if (isTestingMode) {
 					Thread.sleep(100);
@@ -278,7 +278,7 @@ public class autobotsV3 {
 					testCsvFileCounter += 5;
 				} else {
 					Thread.sleep(300000); // 5min
-					csvResult.write(Parser.getDate() + ","
+					csvResult.write(ParserForTests.getDate() + ","
 							+ String.valueOf(Double.parseDouble(client.getAccount().getAssetBalance(pair2).getFree())
 									+ Double.parseDouble(client.getAccount().getAssetBalance(pair2).getLocked()))
 									.replace(',', '.')
@@ -370,7 +370,7 @@ public class autobotsV3 {
 					} else {
 						strategy0Countdown += 0.084;
 					}
-					Parser.write(log, "ordersCountdown : " + strategy0Countdown);
+					ParserForTests.write(log, "ordersCountdown : " + strategy0Countdown);
 					// environ 1/12 d'heure
 					// On incrémente tous les ordres de 5min -> annulés au bout de 27h
 				}
@@ -382,7 +382,7 @@ public class autobotsV3 {
 					countingDown = false;
 					cancelOrders(client, FLUXUSDT, listOfOrdersStrategy0, listOfSellsStrategy0Test,
 							listOfBuysStrategy0Test);
-					Parser.write(log, "On annule tous les ordres");
+					ParserForTests.write(log, "On annule tous les ordres");
 				}
 
 				// On récupere le prix actuel du coin
@@ -394,13 +394,13 @@ public class autobotsV3 {
 					System.out.println("Ma30 : " + ma30);
 					priceLowerThanMa30 = (FLUXma30.getReader().getActualPrice().getLow() <= (1.005 * ma30));
 				} else {
-					Parser.write(log, "FLUXPrice : " + FLUXPrice);
+					ParserForTests.write(log, "FLUXPrice : " + FLUXPrice);
 					priceLowerThanMa30 = (FLUXPrice <= (1.005 * FLUXma30.getUpdateMa30()));
 				}
 				if (FLUXma30.getReader().isBreaker()) {
-					Parser.write(log, "Solde USDT : "
+					ParserForTests.write(log, "Solde USDT : "
 							+ (balances.get("USDT").getFreeBalance() + balances.get("USDT").getUsedBalance()));
-					Parser.write(log, "Solde FLUX : "
+					ParserForTests.write(log, "Solde FLUX : "
 							+ (balances.get("FLUX").getFreeBalance() + balances.get("FLUX").getUsedBalance()));
 					break;
 				}
@@ -409,7 +409,7 @@ public class autobotsV3 {
 					if (breakMa30Action) {
 						cancelOrders(client, FLUXUSDT, listOfOrdersStrategy0, listOfSellsStrategy0Test,
 								listOfBuysStrategy0Test);
-						Parser.write(log, "On annule tous les ordres");
+						ParserForTests.write(log, "On annule tous les ordres");
 						buyOrder(client, FLUXUSDT, USDTBalance, FLUXma30.getMa30(), listOfOrdersStrategy0,
 								listOfBuysStrategy0Test);
 						sellOrder(client, FLUXUSDT, FLUXBalance, FLUXma30.getMa30(), listOfOrdersStrategy0,
@@ -422,8 +422,8 @@ public class autobotsV3 {
 						} else {
 							USDTBalance = getBalance(pair1, account, 0);
 							FLUXBalance = getBalance(pair2, account, 0);
-							Parser.write(log, "Balance FLUX : " + FLUXBalance);
-							Parser.write(log, "Balance USDT : " + USDTBalance);
+							ParserForTests.write(log, "Balance FLUX : " + FLUXBalance);
+							ParserForTests.write(log, "Balance USDT : " + USDTBalance);
 						}
 						breakMa30Action = false;
 						countingDown = true;
@@ -432,7 +432,7 @@ public class autobotsV3 {
 				}
 
 			}
-			Parser.write(log, "========== Fin ==========");
+			ParserForTests.write(log, "========== Fin ==========");
 		} catch (
 
 		Exception e) {
@@ -441,7 +441,7 @@ public class autobotsV3 {
 		} finally {
 			// @TODO : en cas d'erreur, on sauvegarde toutes les valeurs dans le XML, on
 			// annule tous les ordres en cours et on releve l'exception
-			Parser.saveData(ma30Array, trendArray);
+			ParserForTests.saveData(ma30Array, trendArray);
 			// on ferme les FileWriter de log et de csvResult
 			log.close();
 			csvResult.close();

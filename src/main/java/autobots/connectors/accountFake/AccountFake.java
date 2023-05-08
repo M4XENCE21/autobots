@@ -1,5 +1,6 @@
 package autobots.connectors.accountFake;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -151,6 +152,9 @@ public class AccountFake {
 	 */
 	public void setAssetBalance(AssetBalanceFake asset) {
 		boolean found = false;
+		if (balances == null) {
+			balances = new ArrayList<AssetBalanceFake>();
+		}
 		for (AssetBalanceFake assetBalance : balances) {
 			if (asset.getAsset().equals(assetBalance.getAsset())) {
 				assetBalance.setFree(asset.getFree());

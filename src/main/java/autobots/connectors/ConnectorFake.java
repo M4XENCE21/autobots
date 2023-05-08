@@ -17,15 +17,16 @@ public class ConnectorFake {
 
 	public ConnectorFake(FileWriter log) {
 		this.log = log;
-	}
-
-	public void connect(String symbol) throws IOException {
 		Parser.write(log, "========== Initialisation ==========");
 		account = new AccountFake();
 		account.setAssetBalance(new AssetBalanceFake("ETH", "2.5", "0"));
 		account.setAssetBalance(new AssetBalanceFake("USDT", "5000", "0"));
 		Parser.write(log, "account : " + account);
 		Parser.write(log, "========== Initialisation FIN ==========");
+	}
+
+	public void connect() throws IOException {
+
 	}
 
 	public FileWriter getLog() {

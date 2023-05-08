@@ -13,7 +13,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 public class Parser {
-	public static String relativePath = "..\\binance-bot\\src\\main\\resources\\";
+	public static String relativePath = "..\\autobots\\src\\main\\resources\\";
 //	public static String relativePath = ".\\";
 //	public static String relativePath = "";
 
