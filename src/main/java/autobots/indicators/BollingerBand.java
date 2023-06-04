@@ -20,7 +20,7 @@ public class BollingerBand {
 	/** Up Bollinger Band */
 	private final double ubb;
 
-	BollingerBand(BarSeries series, int barCount) {
+	public BollingerBand(BarSeries series, int barCount) {
 		// @XXX on prend barCount=14 par defaut
 		// Close price
 		ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
