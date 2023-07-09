@@ -1,13 +1,16 @@
 import java.io.IOException;
+import java.util.List;
 
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
+import com.binance.api.client.domain.market.Candlestick;
+import com.binance.api.client.domain.market.CandlestickInterval;
 
 public class bot {
 
 	public static void main(String[] args) throws IOException {
-		String API_KEY = "XXX";
-		String SECRET = "XXX";
+		String API_KEY = "xxx";
+		String SECRET = "xxx";
 
 		BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(API_KEY, SECRET);
 		BinanceApiRestClient client = factory.newRestClient();
@@ -53,6 +56,9 @@ public class bot {
 
 		// InstanceOfMA30 ma = new InstanceOfMA30("FLUX", client);
 		// System.out.println(Integer.parseInt(client.getPrice("FLUXUSDT").getPrice()));
-		System.out.println(Double.parseDouble(client.getPrice("FLUXUSDT").getPrice()));
+		System.out.println(Double.parseDouble(client.getPrice("ETHUSDT").getPrice()));
+
+		List<Candlestick> candlesticks = client.getCandlestickBars("ETHUSDT", CandlestickInterval.FOUR_HOURLY);
+		System.out.println(candlesticks.get(candlesticks.size() - 1));
 	}
 }
