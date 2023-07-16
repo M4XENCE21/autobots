@@ -23,12 +23,9 @@ public class Connector {
 	/** Binance account, with all balances. */
 	private Account account;
 
-	public Connector(FileWriter log) {
-		this.log = log;
-	}
-
 	@SuppressWarnings("deprecation")
-	public void connect(String API_KEY, String SECRET) throws IOException {
+	public Connector(String API_KEY, String SECRET) throws IOException {
+		log = new FileWriter(Parser.createFile("traces", ".txt"));
 		Parser.write(log, "========== Initialisation ==========");
 		// connection API
 		factory = BinanceApiClientFactory.newInstance(API_KEY, SECRET);
@@ -62,5 +59,4 @@ public class Connector {
 	public Account getAccount() {
 		return account;
 	}
-
 }

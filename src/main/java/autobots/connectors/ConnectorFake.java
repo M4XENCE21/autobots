@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import autobots.connectors.accountFake.AccountFake;
 import autobots.connectors.accountFake.AssetBalanceFake;
-import autobots.parsing.Parser;
+import autobots.parsing.ParserForTests;
 
 public class ConnectorFake {
 
@@ -15,18 +15,14 @@ public class ConnectorFake {
 	/** Binance account, with all balances. */
 	private AccountFake account;
 
-	public ConnectorFake(FileWriter log) {
-		this.log = log;
-		Parser.write(log, "========== Initialisation ==========");
+	public ConnectorFake() throws IOException {
+		log = new FileWriter(ParserForTests.createFile("traces", ".txt"));
+		ParserForTests.write(log, "========== Initialisation ==========");
 		account = new AccountFake();
 		account.setAssetBalance(new AssetBalanceFake("ETH", "2.5", "0"));
 		account.setAssetBalance(new AssetBalanceFake("USDT", "5000", "0"));
-		Parser.write(log, "account : " + account);
-		Parser.write(log, "========== Initialisation FIN ==========");
-	}
-
-	public void connect() throws IOException {
-
+		ParserForTests.write(log, "account : " + account);
+		ParserForTests.write(log, "========== Initialisation FIN ==========");
 	}
 
 	public FileWriter getLog() {
