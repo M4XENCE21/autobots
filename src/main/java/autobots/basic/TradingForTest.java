@@ -10,11 +10,13 @@ public class TradingForTest {
 
 	private ArrayList<OrderForTest> listOfBuyOrders;
 	private ArrayList<OrderForTest> listOfSellOrders;
+	private int currentPriceIndex;
 
 	public TradingForTest(ArrayList<OrderForTest> listOfBuyingOrders, ArrayList<OrderForTest> listOfSellingOrders) {
 		super();
 		this.listOfBuyOrders = listOfBuyingOrders;
 		this.listOfSellOrders = listOfSellingOrders;
+		this.currentPriceIndex = 0;
 	}
 
 	public ArrayList<OrderForTest> getListOfBuyOrders() {
@@ -149,6 +151,11 @@ public class TradingForTest {
 		OrderDate orderDate = new OrderDate();
 		removeBuyOrder(connector, orderDate, symbol1, symbol2);
 		removeSellOrder(connector, orderDate, symbol1, symbol2);
+	}
+
+	public double getPrice(String symbol1, String symbol2) {
+		return 0; // @TODO
+
 	}
 
 }

@@ -13,9 +13,11 @@ abstract class ATrading {
 //		// update csv, 1 file by day
 //	}
 
-	abstract void buyOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price);
+	abstract long buyOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price);
 
-	abstract void sellOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price);
+	abstract long sellOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price);
 
 	abstract void cancelOrders(BinanceApiRestClient client, String pair1, String pair2);
+
+	abstract void updateListOfOrders(BinanceApiRestClient client, String pair1, String pair2);
 }

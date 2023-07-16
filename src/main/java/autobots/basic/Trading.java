@@ -40,30 +40,35 @@ public class Trading extends ATrading {
 	}
 
 	@Override
-	public void buyOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price) {
+	public long buyOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price) {
+		long id = -1;
 		DecimalFormat f = new DecimalFormat("##.00");
 		String quantityString = f.format(quantity);
 		String priceString = f.format(price);
 		if ((quantity * price) > 15.0) {
 			NewOrderResponse newOrderResponse = client
 					.newOrder(NewOrder.limitBuy(pair1 + pair2, TimeInForce.GTC, quantityString, priceString));
-			listOfOrders.add(newOrderResponse.getOrderId());
+			listOfOrders.add(id);
+			id = newOrderResponse.getOrderId();
 			Parser.write(log, "Nouvel ordre d'achat de " + quantityString + " " + pair1 + " au prix de " + priceString
-					+ "| id : " + newOrderResponse.getOrderId());
+					+ "| id : " + id);
 		}
+		return id;
 	}
 
 	@Override
-	public void sellOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price) {
+	public long sellOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price) {
+		long id = -1;
 		DecimalFormat f = new DecimalFormat("##.00");
 		String quantityString = f.format(quantity);
 		String priceString = f.format(price);
 		NewOrderResponse newOrderResponse = client
 				.newOrder(NewOrder.limitSell(pair1 + pair2, TimeInForce.GTC, quantityString, priceString));
-		listOfOrders.add(newOrderResponse.getOrderId());
+		id = newOrderResponse.getOrderId();
+		listOfOrders.add(id);
 		Parser.write(log, "Nouvel ordre de vente de " + quantityString + " " + pair1 + " au prix de " + priceString
-				+ "| id : " + newOrderResponse.getOrderId());
-
+				+ "| id : " + id);
+		return id;
 	}
 
 	private void cancelOrder(BinanceApiRestClient client, long orderId, String pair) {
@@ -88,4 +93,22 @@ public class Trading extends ATrading {
 
 	}
 
+	@Override
+	public void updateListOfOrders(BinanceApiRestClient client, String pair1, String pair2) {
+		for (int i = 0; i < listOfOrders.size(); i++) {
+			OrderStatus orderStatus = client.getOrderStatus(new OrderStatusRequest(pair1 + pair2, listOfOrders.get(i)))
+					.getStatus();
+			boolean orderIsActive = (orderStatus == OrderStatus.NEW) || (orderStatus == OrderStatus.PARTIALLY_FILLED);
+			if (!orderIsActive) {
+				listOfOrders.remove(i);
+				try {
+					Parser.write(log, "Ordre executé - pair : " + pair1 + pair2 + " | statut : " + orderStatus
+							+ " | id : " + listOfOrders.get(i));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
 }
