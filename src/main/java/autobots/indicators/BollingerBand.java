@@ -37,6 +37,9 @@ public class BollingerBand {
 	/** Up Bollinger Band Serie */
 	private BollingerBandsUpperIndicator ubbSerie;
 
+	/** Bollinger Band Bar Serie */
+	private BarSeries series;
+
 	public BollingerBand(BarSeries series, int barCount) {
 		// @XXX on prend barCount=14 par defaut
 		// Close price
@@ -55,6 +58,14 @@ public class BollingerBand {
 		this.lbbSerie = lowBBand;
 		this.mbbSerie = middleBBand;
 		this.ubbSerie = upBBand;
+		this.series = series;
+	}
+
+	/**
+	 * @return the lbbSerie
+	 */
+	public BarSeries getBarSeries() {
+		return series;
 	}
 
 	/**
@@ -102,7 +113,7 @@ public class BollingerBand {
 		return dn.getDecimalFormat().format(mbb);
 	}
 
-	public void updateBollingerBand(BarSeries series, final Candlestick candle) {
+	public void updateBollingerBand(final Candlestick candle) {
 
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date2 = new Date(candle.getOpenTime());
