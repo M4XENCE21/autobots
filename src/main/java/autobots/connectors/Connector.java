@@ -1,6 +1,5 @@
 package autobots.connectors;
 
-import java.io.FileWriter;
 import java.io.IOException;
 
 import com.binance.api.client.BinanceApiClientFactory;
@@ -9,10 +8,7 @@ import com.binance.api.client.domain.account.Account;
 
 import autobots.parsing.Parser;
 
-public class Connector {
-
-	/** File containing logs. */
-	private FileWriter log;
+public class Connector extends AConnector {
 
 	/** Binance API factory. */
 	private BinanceApiClientFactory factory;
@@ -25,7 +21,7 @@ public class Connector {
 
 	@SuppressWarnings("deprecation")
 	public Connector(String API_KEY, String SECRET) throws IOException {
-		log = new FileWriter(Parser.createFile("traces", ".txt"));
+		super();
 		Parser.write(log, "========== Initialisation ==========");
 		// connection API
 		factory = BinanceApiClientFactory.newInstance(API_KEY, SECRET);
@@ -42,10 +38,6 @@ public class Connector {
 		long serverTime = client.getServerTime();
 		System.out.println("server time : " + serverTime);
 		System.out.println("system time - server time : " + (System.currentTimeMillis() - serverTime));
-	}
-
-	public FileWriter getLog() {
-		return log;
 	}
 
 	public BinanceApiClientFactory getFactory() {
