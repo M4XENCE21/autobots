@@ -3,6 +3,7 @@ package autobots.basic;
 import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.OrderStatus;
@@ -12,15 +13,27 @@ import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.account.request.CancelOrderRequest;
 import com.binance.api.client.domain.account.request.OrderStatusRequest;
+import com.binance.api.client.domain.market.Candlestick;
+import com.binance.api.client.domain.market.CandlestickInterval;
 
 import autobots.parsing.Parser;
 
 public class Trading extends ATrading {
-	public Trading(FileWriter log) {
+	public Trading(BinanceApiRestClient client, String pair1, String pair2, FileWriter log) {
+		this.client = client;
+		this.pair1 = pair1;
+		this.pair2 = pair2;
 		this.log = log;
+		listOfOrders = new ArrayList<Long>();
 	}
 
 	private FileWriter log;
+
+	private BinanceApiRestClient client;
+
+	private String pair1;
+
+	private String pair2;
 
 	/** Contient la liste des id des ordres en cours. */
 	private ArrayList<Long> listOfOrders;
@@ -31,8 +44,12 @@ public class Trading extends ATrading {
 	}
 
 	@Override
-	public double getPrice(BinanceApiRestClient client, String pair1, String pair2) {
+	public double getPrice() {
 		return Double.parseDouble(client.getPrice(pair1 + pair2).getPrice());
+	}
+
+	public ArrayList<Long> getOrders() {
+		return listOfOrders;
 	}
 
 	private void updateCsv() {
@@ -40,7 +57,7 @@ public class Trading extends ATrading {
 	}
 
 	@Override
-	public long buyOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price) {
+	public long buyOrder(double quantity, double price) {
 		long id = -1;
 		DecimalFormat f = new DecimalFormat("##.00");
 		String quantityString = f.format(quantity);
@@ -57,7 +74,7 @@ public class Trading extends ATrading {
 	}
 
 	@Override
-	public long sellOrder(BinanceApiRestClient client, String pair1, String pair2, double quantity, double price) {
+	public long sellOrder(double quantity, double price) {
 		long id = -1;
 		DecimalFormat f = new DecimalFormat("##.00");
 		String quantityString = f.format(quantity);
@@ -76,7 +93,7 @@ public class Trading extends ATrading {
 	}
 
 	@Override
-	public void cancelOrders(BinanceApiRestClient client, String pair1, String pair2) {
+	public void cancelOrders() {
 		for (long orderId : listOfOrders) {
 			OrderStatus orderStatus = client.getOrderStatus(new OrderStatusRequest(pair1 + pair2, orderId)).getStatus();
 			boolean orderIsActive = (orderStatus == OrderStatus.NEW) || (orderStatus == OrderStatus.PARTIALLY_FILLED);
@@ -90,17 +107,18 @@ public class Trading extends ATrading {
 				}
 			}
 		}
+		listOfOrders = new ArrayList<Long>();
 
 	}
 
 	@Override
-	public void updateListOfOrders(BinanceApiRestClient client, String pair1, String pair2) {
+	public ArrayList<Long> getFilledOrders() {
+		ArrayList<Long> listOfFilledOrders = new ArrayList<Long>();
 		for (int i = 0; i < listOfOrders.size(); i++) {
 			OrderStatus orderStatus = client.getOrderStatus(new OrderStatusRequest(pair1 + pair2, listOfOrders.get(i)))
 					.getStatus();
-			boolean orderIsActive = (orderStatus == OrderStatus.NEW) || (orderStatus == OrderStatus.PARTIALLY_FILLED);
-			if (!orderIsActive) {
-				listOfOrders.remove(i);
+			if ((orderStatus == OrderStatus.FILLED) || (orderStatus == OrderStatus.PARTIALLY_FILLED)) {
+				listOfFilledOrders.add(listOfOrders.get(i));
 				try {
 					Parser.write(log, "Ordre executé - pair : " + pair1 + pair2 + " | statut : " + orderStatus
 							+ " | id : " + listOfOrders.get(i));
@@ -109,6 +127,13 @@ public class Trading extends ATrading {
 				}
 			}
 		}
+		return listOfFilledOrders;
 
+	}
+
+	public Candlestick getLastCandleStick(BinanceApiRestClient client, String pair1, String pair2,
+			CandlestickInterval interval) {
+		List<Candlestick> candlesticks = client.getCandlestickBars(pair1 + pair2, interval);
+		return candlesticks.get(candlesticks.size() - 1);
 	}
 }
