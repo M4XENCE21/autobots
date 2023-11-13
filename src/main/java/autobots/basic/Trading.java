@@ -24,7 +24,7 @@ public class Trading extends ATrading {
 		this.pair1 = pair1;
 		this.pair2 = pair2;
 		this.log = log;
-		listOfOrders = new ArrayList<Long>();
+		listOfOrders = new ArrayList<NewOrderResponse>();
 	}
 
 	private FileWriter log;
@@ -36,7 +36,7 @@ public class Trading extends ATrading {
 	private String pair2;
 
 	/** Contient la liste des id des ordres en cours. */
-	private ArrayList<Long> listOfOrders;
+	private ArrayList<NewOrderResponse> listOfOrders;
 
 	@Override
 	public double getBalance(String pair, Account account) {
@@ -48,7 +48,7 @@ public class Trading extends ATrading {
 		return Double.parseDouble(client.getPrice(pair1 + pair2).getPrice());
 	}
 
-	public ArrayList<Long> getOrders() {
+	public ArrayList<NewOrderResponse> getOrders() {
 		return listOfOrders;
 	}
 
@@ -57,35 +57,37 @@ public class Trading extends ATrading {
 	}
 
 	@Override
-	public long buyOrder(double quantity, double price) {
+	public NewOrderResponse buyOrder(double quantity, double price) {
 		long id = -1;
+		NewOrderResponse newOrderResponse = null;
 		DecimalFormat f = new DecimalFormat("##.00");
 		String quantityString = f.format(quantity);
 		String priceString = f.format(price);
 		if ((quantity * price) > 15.0) {
-			NewOrderResponse newOrderResponse = client
+			newOrderResponse = client
 					.newOrder(NewOrder.limitBuy(pair1 + pair2, TimeInForce.GTC, quantityString, priceString));
-			listOfOrders.add(id);
+			listOfOrders.add(newOrderResponse);
 			id = newOrderResponse.getOrderId();
 			Parser.write(log, "Nouvel ordre d'achat de " + quantityString + " " + pair1 + " au prix de " + priceString
 					+ "| id : " + id);
 		}
-		return id;
+		return newOrderResponse;
 	}
 
 	@Override
-	public long sellOrder(double quantity, double price) {
+	public NewOrderResponse sellOrder(double quantity, double price) {
 		long id = -1;
+		NewOrderResponse newOrderResponse = null;
 		DecimalFormat f = new DecimalFormat("##.00");
 		String quantityString = f.format(quantity);
 		String priceString = f.format(price);
-		NewOrderResponse newOrderResponse = client
+		newOrderResponse = client
 				.newOrder(NewOrder.limitSell(pair1 + pair2, TimeInForce.GTC, quantityString, priceString));
 		id = newOrderResponse.getOrderId();
-		listOfOrders.add(id);
+		listOfOrders.add(newOrderResponse);
 		Parser.write(log, "Nouvel ordre de vente de " + quantityString + " " + pair1 + " au prix de " + priceString
 				+ "| id : " + id);
-		return id;
+		return newOrderResponse;
 	}
 
 	private void cancelOrder(BinanceApiRestClient client, long orderId, String pair) {
@@ -94,28 +96,30 @@ public class Trading extends ATrading {
 
 	@Override
 	public void cancelOrders() {
-		for (long orderId : listOfOrders) {
-			OrderStatus orderStatus = client.getOrderStatus(new OrderStatusRequest(pair1 + pair2, orderId)).getStatus();
+		for (NewOrderResponse order : listOfOrders) {
+			OrderStatus orderStatus = client.getOrderStatus(new OrderStatusRequest(pair1 + pair2, order.getOrderId()))
+					.getStatus();
 			boolean orderIsActive = (orderStatus == OrderStatus.NEW) || (orderStatus == OrderStatus.PARTIALLY_FILLED);
 			if (orderIsActive) {
 				try {
 					Parser.write(log, "Ordre annulé - pair : " + pair1 + pair2 + " | statut : " + orderStatus
-							+ " | id : " + orderId);
-					cancelOrder(client, orderId, pair1 + pair2);
+							+ " | id : " + order.getOrderId());
+					cancelOrder(client, order.getOrderId(), pair1 + pair2);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		listOfOrders = new ArrayList<Long>();
+		listOfOrders = new ArrayList<NewOrderResponse>();
 
 	}
 
 	@Override
-	public ArrayList<Long> getFilledOrders() {
-		ArrayList<Long> listOfFilledOrders = new ArrayList<Long>();
+	public ArrayList<NewOrderResponse> getFilledOrders() {
+		ArrayList<NewOrderResponse> listOfFilledOrders = new ArrayList<NewOrderResponse>();
 		for (int i = 0; i < listOfOrders.size(); i++) {
-			OrderStatus orderStatus = client.getOrderStatus(new OrderStatusRequest(pair1 + pair2, listOfOrders.get(i)))
+			OrderStatus orderStatus = client
+					.getOrderStatus(new OrderStatusRequest(pair1 + pair2, listOfOrders.get(i).getOrderId()))
 					.getStatus();
 			if ((orderStatus == OrderStatus.FILLED) || (orderStatus == OrderStatus.PARTIALLY_FILLED)) {
 				listOfFilledOrders.add(listOfOrders.get(i));

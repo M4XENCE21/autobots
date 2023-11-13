@@ -1,10 +1,18 @@
 import java.io.IOException;
 import java.util.List;
 
+import org.ta4j.core.BarSeries;
+
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.market.Candlestick;
 import com.binance.api.client.domain.market.CandlestickInterval;
+
+import autobots.basic.Trading;
+import autobots.connectors.Connector;
+import autobots.indicators.BollingerBand;
+import autobots.indicators.IndicatorsToChart;
+import autobots.strategies.StrategyBollingerBand;
 
 public class bot {
 
@@ -14,6 +22,7 @@ public class bot {
 
 		BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(API_KEY, SECRET);
 		BinanceApiRestClient client = factory.newRestClient();
+		Connector connector = new Connector(API_KEY, SECRET);
 
 //    		Test connectivity
 		client.ping();
@@ -22,6 +31,14 @@ public class bot {
 		long serverTime = client.getServerTime();
 		System.out.println("server time : " + serverTime);
 		System.out.println("system time - server time : " + (System.currentTimeMillis() - serverTime));
+
+		// Getting csv data
+		Trading trading = new Trading(connector.getClient(), "ETH", "USDT", connector.getLog());
+		List<Candlestick> candlesticks = client.getCandlestickBars("ETH" + "USDT", CandlestickInterval.FOUR_HOURLY);
+		// TODO pouvoir convertir une List<Candlestick> en BarSeries
+		BarSeries series4h = IndicatorsToChart.loadCsvSeriesCustom("FLUXUSDT-1h-2022-03.csv");
+		BollingerBand bb = new BollingerBand(series4h, 14);
+		StrategyBollingerBand strategy = new StrategyBollingerBand(bb, connector, "ETH", "USDT");
 
 //    		Order book of a symbol
 
@@ -58,7 +75,7 @@ public class bot {
 		// System.out.println(Integer.parseInt(client.getPrice("FLUXUSDT").getPrice()));
 		System.out.println(Double.parseDouble(client.getPrice("ETHUSDT").getPrice()));
 
-		List<Candlestick> candlesticks = client.getCandlestickBars("ETHUSDT", CandlestickInterval.FOUR_HOURLY);
-		System.out.println(candlesticks.get(candlesticks.size() - 1));
+//		List<Candlestick> candlesticks = client.getCandlestickBars("ETHUSDT", CandlestickInterval.FOUR_HOURLY);
+//		System.out.println(candlesticks.get(candlesticks.size() - 1));
 	}
 }

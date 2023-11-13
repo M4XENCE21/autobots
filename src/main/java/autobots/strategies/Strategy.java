@@ -1,13 +1,15 @@
 package autobots.strategies;
 
+import autobots.indicators.BollingerBand;
+
 public abstract class Strategy {
 
 	@SuppressWarnings("unused")
-	private String[] csv;
+	private BollingerBand bb;
 
 	/** Initialize indicators or other data required before starting. */
-	Strategy(String[] csv) {
-		this.csv = csv;
+	Strategy(BollingerBand bollingerBand) {
+		this.bb = bollingerBand;
 	}
 
 	/** Run the strategy */

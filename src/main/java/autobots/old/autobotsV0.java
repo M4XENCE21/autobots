@@ -1,4 +1,5 @@
 package autobots.old;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -77,8 +78,8 @@ public class autobotsV0 {
 							NewOrder.limitBuy(pair.getPair1Name(), TimeInForce.GTC, quantityString, priceString));
 					// System.out.println(newOrderResponse.getOrderId());
 					listOfOrdersStrategy.add(newOrderResponse.getOrderId());
-					ParserForTests.write(log, "Nouvel ordre d'achat de " + quantityString + " FLUX au prix de " + priceString
-							+ "| id : " + newOrderResponse.getOrderId());
+					ParserForTests.write(log, "Nouvel ordre d'achat de " + quantityString + " FLUX au prix de "
+							+ priceString + "| id : " + newOrderResponse.getOrderId());
 
 				}
 			}
@@ -106,8 +107,8 @@ public class autobotsV0 {
 						NewOrder.limitSell(pair.getPair1Name(), TimeInForce.GTC, quantityString, priceString));
 				// System.out.println(newOrderResponse.getOrderId());
 				listOfOrdersStrategy.add(newOrderResponse.getOrderId());
-				ParserForTests.write(log, "Nouvel ordre de vente de " + quantityString + " FLUX au prix de " + priceString
-						+ "| id : " + newOrderResponse.getOrderId());
+				ParserForTests.write(log, "Nouvel ordre de vente de " + quantityString + " FLUX au prix de "
+						+ priceString + "| id : " + newOrderResponse.getOrderId());
 			}
 		}
 	}

@@ -113,6 +113,8 @@ public class BollingerBand {
 		return dn.getDecimalFormat().format(mbb);
 	}
 
+	// @FIXME il faut prendre en argument le barCount ou passer la méthode en
+	// private, pour ne pas mettre 14 en dur
 	public void updateBollingerBand(final Candlestick candle) {
 
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -153,4 +155,10 @@ public class BollingerBand {
 		this.ubbSerie = upBBand;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder().append("BollingerBand - ").append(String.format("UBB : %s | ", getUbb()))
+				.append(String.format("MBB : %s | ", getMbb())).append(String.format("LBB : %s", getLbb()));
+		return sb.toString();
+	}
 }

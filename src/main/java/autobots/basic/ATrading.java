@@ -3,6 +3,7 @@ package autobots.basic;
 import java.util.ArrayList;
 
 import com.binance.api.client.domain.account.Account;
+import com.binance.api.client.domain.account.NewOrderResponse;
 
 abstract class ATrading {
 
@@ -14,11 +15,11 @@ abstract class ATrading {
 //		// update csv, 1 file by day
 //	}
 
-	abstract long buyOrder(double quantity, double price);
+	abstract NewOrderResponse buyOrder(double quantity, double price);
 
-	abstract long sellOrder(double quantity, double price);
+	abstract NewOrderResponse sellOrder(double quantity, double price);
 
 	abstract void cancelOrders();
 
-	abstract ArrayList<Long> getFilledOrders();
+	abstract ArrayList<NewOrderResponse> getFilledOrders();
 }

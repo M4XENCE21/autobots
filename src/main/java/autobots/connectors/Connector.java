@@ -27,7 +27,7 @@ public class Connector extends AConnector {
 		factory = BinanceApiClientFactory.newInstance(API_KEY, SECRET);
 		client = factory.newRestClient();
 		account = client.getAccount();
-		Parser.write(log, "account : " + account);
+		Parser.write(log, "Account : " + account.getAssetBalance("USDT"));
 		Parser.write(log, "========== Initialisation FIN ==========");
 	}
 
