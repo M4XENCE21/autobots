@@ -48,9 +48,9 @@
 		    <version>2.3.0</version>
 		</dependency>
 	  	<dependency>
-		  <groupId>co.oril</groupId>
-		  <artifactId>binance-api-client-java</artifactId>
-		  <version>1.0.1</version>
+		  <groupId>com.binance.api</groupId>
+		  <artifactId>binance-api-client-maxou</artifactId>
+		  <version>1.1.0</version>
 		</dependency>
 	</dependencies>
 	
